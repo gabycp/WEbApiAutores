@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using WEbApiAutores.Controllers;
+using WEbApiAutores.Filtros;
 using WEbApiAutores.Middlewares;
 using WEbApiAutores.Servicios;
 
@@ -27,7 +29,9 @@ namespace WEbApiAutores
             //Un servicio es la resolucion de una referencia configurada en el sistema de inyecion de dependencia
             //Servicios basados en interfaces
 
-            service.AddControllers().AddJsonOptions( x =>
+            service.AddControllers( opciones => {
+                opciones.Filters.Add(typeof(FiltrodeExcepcioncs));
+            } ).AddJsonOptions( x =>
                     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             service.AddDbContext<ApplicationDbContext>(options =>
@@ -52,7 +56,12 @@ namespace WEbApiAutores
             service.AddTransient<ServicioTransient>();
             service.AddScoped<ServicioScope>();
             //service.AddSingleton<ServicioSingleton>();
+            service.AddTransient<FiltrodeExcepcioncs>();
+            service.AddHostedService<EscribirEnArchivo>();
 
+            service.AddResponseCaching();
+
+            service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             service.AddEndpointsApiExplorer();
@@ -62,7 +71,9 @@ namespace WEbApiAutores
 
         }
 
-        public void Configure( IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure( IApplicationBuilder
+            
+            app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             //app.UseMiddleware<LoguearRespuestaHTTPMiddleware>();
             app.UseLoguearRespuestaHTTP();
@@ -88,6 +99,7 @@ namespace WEbApiAutores
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseResponseCaching();
 
             app.UseAuthorization();
 
