@@ -29,3 +29,12 @@ que repetir codigo
 
 MAnera titpica de aplicar un filtro es a traves de una accion, a nivel de controlador, a nivel global.
 
+El entity Framework core es un ORM, es decir un mapeador de objetos relacionados
+
+--Actualizacion Parcial con Http Patch
+Se utiliza el Http Patch para aplicar actualizaciones parciales en un recurso.
+¿Como funciona?
+El RFC 5789 es el que define el HTTP Patch
+Se usa el JSON Patch(RFC 6902) --> indica como debe ser la estructura del cuerpo de la peticion http, que va indicar lo que el cliente quiere aplicar
+sobre el recurso, se pueden hacer varias acciones como agregar, remover, reemplazar, copiar y probar.
+

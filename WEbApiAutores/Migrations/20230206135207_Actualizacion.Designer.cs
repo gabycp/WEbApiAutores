@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WEbApiAutores;
 
@@ -11,9 +12,11 @@ using WEbApiAutores;
 namespace WEbApiAutores.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230206135207_Actualizacion")]
+    partial class Actualizacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,24 +43,6 @@ namespace WEbApiAutores.Migrations
                     b.ToTable("Autores");
                 });
 
-            modelBuilder.Entity("WEbApiAutores.Entidades.AutoresLibros", b =>
-                {
-                    b.Property<int>("AutorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LibrosId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Orden")
-                        .HasColumnType("int");
-
-                    b.HasKey("AutorId", "LibrosId");
-
-                    b.HasIndex("LibrosId");
-
-                    b.ToTable("AutoresLibros");
-                });
-
             modelBuilder.Entity("WEbApiAutores.Entidades.Comentario", b =>
                 {
                     b.Property<int>("Id")
@@ -76,7 +61,7 @@ namespace WEbApiAutores.Migrations
 
                     b.HasIndex("LibrosId");
 
-                    b.ToTable("Comentarios");
+                    b.ToTable("Comentario");
                 });
 
             modelBuilder.Entity("WEbApiAutores.Entidades.Libros", b =>
@@ -102,25 +87,6 @@ namespace WEbApiAutores.Migrations
                     b.ToTable("Libros");
                 });
 
-            modelBuilder.Entity("WEbApiAutores.Entidades.AutoresLibros", b =>
-                {
-                    b.HasOne("WEbApiAutores.Entidades.Autor", "Autor")
-                        .WithMany("AutoresLibros")
-                        .HasForeignKey("AutorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WEbApiAutores.Entidades.Libros", "Libros")
-                        .WithMany("AutoresLibros")
-                        .HasForeignKey("LibrosId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Autor");
-
-                    b.Navigation("Libros");
-                });
-
             modelBuilder.Entity("WEbApiAutores.Entidades.Comentario", b =>
                 {
                     b.HasOne("WEbApiAutores.Entidades.Libros", "Libros")
@@ -141,15 +107,11 @@ namespace WEbApiAutores.Migrations
 
             modelBuilder.Entity("WEbApiAutores.Entidades.Autor", b =>
                 {
-                    b.Navigation("AutoresLibros");
-
                     b.Navigation("Libros");
                 });
 
             modelBuilder.Entity("WEbApiAutores.Entidades.Libros", b =>
                 {
-                    b.Navigation("AutoresLibros");
-
                     b.Navigation("Comentarios");
                 });
 #pragma warning restore 612, 618
