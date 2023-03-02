@@ -15,11 +15,19 @@ namespace WEbApiAutores.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private readonly IConfiguration configuration;
 
-        public AutoresController(ApplicationDbContext context, IMapper mapper) 
+        public AutoresController(ApplicationDbContext context, IMapper mapper, IConfiguration configuration) 
         {
             this.context = context;
             this.mapper = mapper;
+            this.configuration = configuration;
+        }
+
+        [HttpGet("configuracion")]
+        public ActionResult<string> ObtenerConfiguracion()
+        {
+            return configuration["ConnectionStrings:defaultConnection"];
         }
 
 
@@ -112,7 +120,7 @@ namespace WEbApiAutores.Controllers
 
             context.Remove(new Autor() { Id = id });
             await context.SaveChangesAsync();
-            return Ok();
+            return NoContent();
         }
     }
 }

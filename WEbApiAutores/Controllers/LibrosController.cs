@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WEbApiAutores.DTOs;
@@ -8,7 +10,7 @@ namespace WEbApiAutores.Controllers
 {
     [ApiController]
     [Route("api/libros")]
-    public class LibrosController: ControllerBase
+    public class LibrosController : ControllerBase
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
@@ -19,7 +21,7 @@ namespace WEbApiAutores.Controllers
             this.mapper = mapper;
         }
 
-        [HttpGet("{id:int}", Name ="obtenerLibro")]
+        [HttpGet("{id:int}", Name = "obtenerLibro")]
         public async Task<ActionResult<LibroDTOConAutores>> Get(int id)
         {
 
@@ -28,6 +30,12 @@ namespace WEbApiAutores.Controllers
                 .Include(libroDB => libroDB.AutoresLibros)
                 .ThenInclude(autorLibroDB => autorLibroDB.Autor)
                 .FirstOrDefaultAsync(x => x.Id == id);
+
+            if(libro == null)
+            {
+
+                return NotFound();
+            }
 
             libro.AutoresLibros = libro.AutoresLibros.OrderBy(x => x.Orden).ToList();
             return mapper.Map<LibroDTOConAutores>(libro);
@@ -44,7 +52,7 @@ namespace WEbApiAutores.Controllers
 
             var AutoresID = await context.Autores.Where(autoresBD => libroDTO.AutoresId.Contains(autoresBD.Id))
                                                  .Select(x => x.Id).ToListAsync();
-                
+
 
             if (libroDTO.AutoresId.Count != AutoresID.Count)
             {
@@ -70,7 +78,7 @@ namespace WEbApiAutores.Controllers
                 .Include(libroDB => libroDB.AutoresLibros)
                 .FirstOrDefaultAsync(x => x.Id == libroId);
 
-            if(libro == null)
+            if (libro == null)
             {
                 return NotFound();
             }
@@ -85,7 +93,7 @@ namespace WEbApiAutores.Controllers
 
         }
 
-        public void AsignarOrdenAutores(Libros libro)
+        private void AsignarOrdenAutores(Libros libro)
         {
             if (libro.AutoresLibros != null)
             {
@@ -95,5 +103,54 @@ namespace WEbApiAutores.Controllers
                 }
             }
         }
+
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult> Patch(int id, JsonPatchDocument<LibroPatchDTO> jsonPatchDocument)
+        {
+            if(jsonPatchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var libroDB = await context.Libros.FirstOrDefaultAsync(x => x.Id == id);
+
+            if(libroDB == null)
+            {
+                return NotFound();
+            }
+
+            var libroDTO = mapper.Map<LibroPatchDTO>(libroDB);
+
+            jsonPatchDocument.ApplyTo(libroDTO, ModelState);
+
+            var esValido = TryValidateModel(libroDTO);
+
+            if(!esValido) { return BadRequest(ModelState); }
+
+            mapper.Map(libroDTO, libroDB);
+
+            await context.SaveChangesAsync();
+            return NoContent();
+
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var existe = await context.Libros.AnyAsync(x => x.Id == id);
+
+            if (!existe)
+            {
+
+                return NotFound();
+
+            }
+
+            context.Remove(new Libros() { Id = id });
+            await context.SaveChangesAsync();
+            return NoContent();
+        }
+
+
     }
 }

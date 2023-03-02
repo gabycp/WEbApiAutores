@@ -31,7 +31,7 @@ namespace WEbApiAutores
             service.AddControllers( opciones => {
                 opciones.Filters.Add(typeof(FiltrodeExcepcioncs));
             } ).AddJsonOptions( x =>
-                    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+                    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles).AddNewtonsoftJson();
 
             service.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer( Configuration.GetConnectionString("defaultConnection")));
@@ -39,7 +39,7 @@ namespace WEbApiAutores
             service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            service.AddEndpointsApiExplorer();
+            //service.AddEndpointsApiExplorer();
             service.AddSwaggerGen();
 
             service.AddAutoMapper(typeof( Startup ));
@@ -61,9 +61,12 @@ namespace WEbApiAutores
             //Los metodos que comienza con Use son los Middleware
             if (env.IsDevelopment()) //Este metodo permite mostrar solo lo que estara en modo de desarrollo y no estara en produccion
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                //app.UseSwagger();
+               // app.UseSwaggerUI();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 

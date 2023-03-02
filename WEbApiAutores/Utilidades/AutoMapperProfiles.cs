@@ -19,6 +19,7 @@ namespace WEbApiAutores.Utilidades
             CreateMap<Libros, LibroDTO>();
             CreateMap<Libros,LibroDTOConAutores>()
                 .ForMember(libro => libro.Autores, opciones => opciones.MapFrom(MapLibroDTOAutores));
+            CreateMap<LibroPatchDTO,Libros>().ReverseMap();
             CreateMap<ComentarioCreacionDTO,Comentario>();
             CreateMap<Comentario, ComentarioDT>();
         }

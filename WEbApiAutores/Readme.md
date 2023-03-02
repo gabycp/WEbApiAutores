@@ -37,4 +37,23 @@ Se utiliza el Http Patch para aplicar actualizaciones parciales en un recurso.
 El RFC 5789 es el que define el HTTP Patch
 Se usa el JSON Patch(RFC 6902) --> indica como debe ser la estructura del cuerpo de la peticion http, que va indicar lo que el cliente quiere aplicar
 sobre el recurso, se pueden hacer varias acciones como agregar, remover, reemplazar, copiar y probar.
+Obs. Puede funcionar que una actuaizacion parcial, optimiza o eficiencia  recurso porque ya no se debe mandar toda una estructura completa del recurso sino
+solo parcial.
+
+--Configuraciones
+Las configuraciones son datos externos de nuestra aplicacion que ayudan a nuestra aplicacion a funcionar correctamente.
+ejemplo: connetionstring
+Proveedores de configuracion --> nos permiten comunicarnos con varios tipos de fuentes externa, ya sea que se quiere comuncar con un JSON,
+variables de memoria, argumentos de linea de comando.
+IConfiguraciones nos permite acceder a los datos de confguracion
+
+---Consideraciones de Seguridad--
+
+*Existe data que es importante proteger y no tener a simple vista en un archivo de texto plano.
+*Un ejemplo es un connection string de produccion.
+*Podemos usar variables de ambiente
+
+--Autenticación y Autorización--
+
+La autenticacion 
 
