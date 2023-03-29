@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using WEbApiAutores.Controllers;
@@ -45,7 +46,9 @@ namespace WEbApiAutores
             service.AddAutoMapper(typeof( Startup ));
 
             
-
+            service.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
         }
 
         public void Configure( IApplicationBuilder

@@ -55,5 +55,11 @@ IConfiguraciones nos permite acceder a los datos de confguracion
 
 --Autenticación y Autorización--
 
-La autenticacion 
+La autenticacion se trata de que un usuario muestre credenciales para verificar su identidad
+La autorizacion se refiere a lo que un usuario tiene permitido hacer
+
+Esquemas de Autenticación
+*Anonimo
+*Basic(en base64)
+*Bearer(con token que devuelve el servidor)
 

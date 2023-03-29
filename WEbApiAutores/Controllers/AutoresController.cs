@@ -24,11 +24,12 @@ namespace WEbApiAutores.Controllers
             this.configuration = configuration;
         }
 
-        [HttpGet("configuracion")]
-        public ActionResult<string> ObtenerConfiguracion()
-        {
-            return configuration["ConnectionStrings:defaultConnection"];
-        }
+        //Parte del curso
+        //[HttpGet("configuracion")]
+        //public ActionResult<string> ObtenerConfiguracion()
+        //{
+        //    return configuration["ConnectionStrings:defaultConnection"];
+        //}
 
 
         [HttpGet]
