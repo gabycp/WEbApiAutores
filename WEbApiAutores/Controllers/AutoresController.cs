@@ -11,6 +11,7 @@ namespace WEbApiAutores.Controllers
 {
     [ApiController]
     [Route("api/autores")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     //  [Authorize]
     public class AutoresController : ControllerBase
     {
@@ -32,9 +33,8 @@ namespace WEbApiAutores.Controllers
         //    return configuration["ConnectionStrings:defaultConnection"];
         //}
 
-
-        [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet] // api/autores 
+        [AllowAnonymous]
         public async Task<ActionResult<List<AutorDTO>>> Get()
         {
             var autores = await context.Autores.Include(x => x.Libros).ToListAsync();

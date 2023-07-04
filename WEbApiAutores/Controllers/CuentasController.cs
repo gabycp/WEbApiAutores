@@ -69,16 +69,14 @@ namespace WEbApiAutores.Controllers
             //Claim: es una informacion del usuario en la cual podemos confiar
             var claims = new List<Claim>()
             {
-                new Claim("email", credencialesUsuario.Email )
+                new Claim("email", credencialesUsuario.Email)
             };
 
             var llave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["llavejwt"]));
             var creds = new SigningCredentials(llave, SecurityAlgorithms.HmacSha256);
-
             var expiracion = DateTime.UtcNow.AddYears(1);
-
-            var securityToken = new JwtSecurityToken(issuer: null, audience: null, claims: claims, expires: expiracion,
-                                                            signingCredentials: creds) ;
+            var securityToken = new JwtSecurityToken(issuer: null, audience: null, claims: claims,
+                expires: expiracion, signingCredentials: creds);
 
             return new RespuestaAutenticacion()
             {
@@ -86,5 +84,6 @@ namespace WEbApiAutores.Controllers
                 Expiracion = expiracion
             };
         }
+
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace WEbApiAutores.Entidades
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace WEbApiAutores.Entidades
 {
     public class Comentario
     {
@@ -6,5 +8,7 @@
         public string Contenido { get; set; }
         public int LibrosId { get; set; }
         public Libros Libros { get; set; }
+        public string UsuarioId { get; set; }
+        public IdentityUser Usuario { get; set; }
     }
 }

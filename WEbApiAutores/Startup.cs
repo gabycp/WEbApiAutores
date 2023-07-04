@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json.Serialization;
 using WEbApiAutores.Controllers;
@@ -15,6 +16,9 @@ namespace WEbApiAutores
     {
         public Startup( IConfiguration configuration )
         {
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             Configuration = configuration;
             ///Se estaban probando las interface y ver la flexibilidad que nos brinda a un nivel alto///
             /*var autorController = new AutoresController(new ApplicationDbContext(null),
@@ -40,17 +44,21 @@ namespace WEbApiAutores
             service.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer( Configuration.GetConnectionString("defaultConnection")));
 
+
+            service.AddEndpointsApiExplorer();
+
             service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer( opciones => opciones.TokenValidationParameters = new TokenValidationParameters { 
+                .AddJwtBearer(opciones => opciones.TokenValidationParameters = new TokenValidationParameters
+                {
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(Configuration["llavejwt"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["llavejwt"])),
                     ClockSkew = TimeSpan.Zero
-                
-                } );
+                });
+
+            
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             //service.AddEndpointsApiExplorer();
@@ -59,7 +67,7 @@ namespace WEbApiAutores
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Name = "Autorization",
+                    Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
@@ -78,7 +86,7 @@ namespace WEbApiAutores
                             }
                         },
 
-                        new string[]{}
+                        new string[] {}
                     }
                 });
 
@@ -105,8 +113,13 @@ namespace WEbApiAutores
             //Los metodos que comienza con Use son los Middleware
             if (env.IsDevelopment()) //Este metodo permite mostrar solo lo que estara en modo de desarrollo y no estara en produccion
             {
+                app.UseSwagger();
+                 app.UseSwaggerUI();
                 //app.UseSwagger();
-               // app.UseSwaggerUI();
+                //app.UseSwaggerUI();
+                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiAutores"));
+
+
             }
 
             app.UseSwagger();
@@ -115,6 +128,8 @@ namespace WEbApiAutores
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

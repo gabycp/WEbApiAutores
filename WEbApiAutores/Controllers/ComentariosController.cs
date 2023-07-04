@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WEbApiAutores.DTOs;
@@ -41,8 +43,10 @@ namespace WEbApiAutores.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Post(int libroId, ComentarioCreacionDTO comentarioCreacionDTO)
         {
+            var email = HttpContext.User.Claims.Where(claim => claim.Type == "email").FirstOrDefault();
 
             var existeLibro = await context.Libros.AnyAsync(x => x.Id == libroId);
 
