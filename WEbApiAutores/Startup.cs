@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using System.Text.Json.Serialization;
 using WEbApiAutores.Controllers;
 using WEbApiAutores.Filtros;
@@ -37,11 +40,49 @@ namespace WEbApiAutores
             service.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer( Configuration.GetConnectionString("defaultConnection")));
 
-            service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+            service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer( opciones => opciones.TokenValidationParameters = new TokenValidationParameters { 
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(Configuration["llavejwt"])),
+                    ClockSkew = TimeSpan.Zero
+                
+                } );
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             //service.AddEndpointsApiExplorer();
-            service.AddSwaggerGen();
+            service.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiAutores", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Autorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+
+                        new string[]{}
+                    }
+                });
+
+                    }) ;
 
             service.AddAutoMapper(typeof( Startup ));
 

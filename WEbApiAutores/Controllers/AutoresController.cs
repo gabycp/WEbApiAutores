@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WEbApiAutores.DTOs;
 using WEbApiAutores.Entidades;
 using System.Linq;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace WEbApiAutores.Controllers
 {
@@ -33,7 +34,7 @@ namespace WEbApiAutores.Controllers
 
 
         [HttpGet]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<List<AutorDTO>>> Get()
         {
             var autores = await context.Autores.Include(x => x.Libros).ToListAsync();
