@@ -98,6 +98,19 @@ namespace WEbApiAutores
             service.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            service.AddAuthorization(opciones =>
+            {
+                opciones.AddPolicy("esAdmin", politica => politica.RequireClaim("esAdmin"));
+            });
+
+            service.AddCors(opciones => 
+            {
+                opciones.AddDefaultPolicy(builder => 
+                {
+                    builder.WithOrigins("https://reqbin.com").AllowAnyMethod().AllowAnyHeader();
+                } );
+            });
         }
 
         public void Configure( IApplicationBuilder
@@ -128,6 +141,8 @@ namespace WEbApiAutores
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthentication();
 

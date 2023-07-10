@@ -11,7 +11,7 @@ namespace WEbApiAutores.Controllers
 {
     [ApiController]
     [Route("api/autores")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "esAdmin")]
     //  [Authorize]
     public class AutoresController : ControllerBase
     {
