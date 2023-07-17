@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 using WEbApiAutores.Controllers;
 using WEbApiAutores.Filtros;
 using WEbApiAutores.Middlewares;
+using WEbApiAutores.Servicios;
 
 namespace WEbApiAutores
 {
@@ -104,6 +105,9 @@ namespace WEbApiAutores
                 opciones.AddPolicy("esAdmin", politica => politica.RequireClaim("esAdmin"));
             });
 
+            //Se tiene acceso a los servicios de proteccion de datos
+            service.AddDataProtection();
+
             service.AddCors(opciones => 
             {
                 opciones.AddDefaultPolicy(builder => 
@@ -111,6 +115,9 @@ namespace WEbApiAutores
                     builder.WithOrigins("https://reqbin.com").AllowAnyMethod().AllowAnyHeader();
                 } );
             });
+
+            //Se llama por Transient, ya que este servicio no guarda estado
+            service.AddTransient<HashService>();
         }
 
         public void Configure( IApplicationBuilder

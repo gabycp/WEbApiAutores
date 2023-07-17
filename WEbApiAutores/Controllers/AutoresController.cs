@@ -17,13 +17,18 @@ namespace WEbApiAutores.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
-        private readonly IConfiguration configuration;
+        private readonly IAuthorizationService authorizationService;
 
-        public AutoresController(ApplicationDbContext context, IMapper mapper, IConfiguration configuration) 
+        //private readonly IConfiguration configuration;
+
+        public AutoresController(ApplicationDbContext context, IMapper mapper, 
+                                    //IConfiguration configuration,
+                                    IAuthorizationService authorizationService ) 
         {
             this.context = context;
             this.mapper = mapper;
-            this.configuration = configuration;
+            this.authorizationService = authorizationService;
+            //this.configuration = configuration;
         }
 
         //Parte del curso
@@ -33,12 +38,34 @@ namespace WEbApiAutores.Controllers
         //    return configuration["ConnectionStrings:defaultConnection"];
         //}
 
-        [HttpGet] // api/autores 
+        [HttpGet(Name = "obtenerAutores")] // api/autores 
         [AllowAnonymous]
-        public async Task<ActionResult<List<AutorDTO>>> Get()
+        public async Task<IActionResult> Get([FromQuery] bool IncluirHATEOAS = true)
         {
             var autores = await context.Autores.Include(x => x.Libros).ToListAsync();
-            return mapper.Map <List<AutorDTO>> (autores);
+            
+            var dto = mapper.Map <List<AutorDTO>> (autores);
+
+            if (IncluirHATEOAS)
+            {
+                var esAdmin = await authorizationService.AuthorizeAsync(User, "esAdmin");
+                dto.ForEach(dto => GenerarEnlaces(dto, esAdmin.Succeeded));
+
+                var resultado = new ColeccionDeRecursos<AutorDTO> { Valores = dto };
+                resultado.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("obtenerAutores", new { }),
+                                                        descripcion: "self",
+                                                        metodo: "GET"));
+                if (esAdmin.Succeeded)
+                {
+                    resultado.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("crearAutor", new { }),
+                                                        descripcion: "crear-autor",
+                                                        metodo: "POST"));
+                }
+
+                return Ok(resultado);
+            }
+
+            return Ok(dto);
                 
         }
 
@@ -51,11 +78,37 @@ namespace WEbApiAutores.Controllers
                         .FirstOrDefaultAsync(x => x.Id == id);
 
             if(Autor== null) { return NotFound(); }
+            var esAdmin = await authorizationService.AuthorizeAsync(User, "esAdmin");
+            var dto = mapper.Map<AutorDTOConLibros>(Autor);  
+            
+            GenerarEnlaces(dto, esAdmin.Succeeded);
 
-            return mapper.Map<AutorDTOConLibros>(Autor);        
+            return dto;
         }
 
-        [HttpGet("{nombre}")]
+        private void GenerarEnlaces(AutorDTO autorDTO, bool esAdmin) 
+        {
+            autorDTO.Enlaces.Add(new DatoHATEOAS( 
+                enlace: Url.Link("obtenerAutor", new { id = autorDTO.Id }),
+                descripcion:"self",
+                metodo:"GET"));
+
+            if(esAdmin)
+            {
+                autorDTO.Enlaces.Add(new DatoHATEOAS(
+                enlace: Url.Link("actualizarAutor", new { id = autorDTO.Id }),
+                descripcion: "self",
+                metodo: "PUT"));
+
+                autorDTO.Enlaces.Add(new DatoHATEOAS(
+                    enlace: Url.Link("borrarAutor", new { id = autorDTO.Id }),
+                    descripcion: "self",
+                    metodo: "DELETE"));
+            }
+            
+        }
+
+        [HttpGet("{nombre}", Name ="obtenerAutorPorNombre")]
         public async Task<ActionResult<List<AutorDTO>>> Get([FromRoute]string nombre)
         {
             var autores = await context.Autores.Where(x => x.Nombre.Contains(nombre)).ToListAsync();
@@ -65,7 +118,7 @@ namespace WEbApiAutores.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost(Name = "crearAutor")]
         public async Task<ActionResult> Post(AutorCreacionDTO autorCreacion)
         {
 
@@ -87,7 +140,7 @@ namespace WEbApiAutores.Controllers
 
         }
 
-        [HttpPut("{id:int}")] //api/autores/1
+        [HttpPut("{id:int}", Name = "actualizarAutor")] //api/autores/1
         public async Task<ActionResult> Put(AutorCreacionDTO autorAutualizado, int id)
         {          
 
@@ -108,7 +161,7 @@ namespace WEbApiAutores.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id:int}")] //api/autores/2
+        [HttpDelete("{id:int}", Name = "borrarAutor")] //api/autores/2
         public async Task<ActionResult> Delete(int id)
         {
             var existe = await context.Autores.AnyAsync(x => x.Id == id);

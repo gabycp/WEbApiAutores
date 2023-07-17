@@ -24,7 +24,7 @@ namespace WEbApiAutores.Controllers
             this.userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "obtenerComentariosLibro")]
         public async Task<ActionResult<List<ComentarioDT>>> Get(int libroId) 
         { 
             var comentarios = await context.Comentarios.Where(coment => coment.LibrosId == libroId).ToListAsync();
@@ -45,7 +45,7 @@ namespace WEbApiAutores.Controllers
             return mapper.Map<ComentarioDT>(comentarioDTO);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "crearComentario")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Post(int libroId, ComentarioCreacionDTO comentarioCreacionDTO)
         {
@@ -73,7 +73,7 @@ namespace WEbApiAutores.Controllers
 
         }
 
-        [HttpPut("{Id:int}")]
+        [HttpPut("{Id:int}", Name = "actualizarComentario")]
         public async Task<ActionResult> Put(int libroId,int Id, ComentarioCreacionDTO comentarioCreacion)
         {
             var existeLibro = await context.Libros.AnyAsync(x => x.Id == libroId);

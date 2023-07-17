@@ -41,7 +41,7 @@ namespace WEbApiAutores.Controllers
             return mapper.Map<LibroDTOConAutores>(libro);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "crearLibro")]
         public async Task<ActionResult> Post(LibroCreacionDTO libroDTO)
         {
 
@@ -71,7 +71,7 @@ namespace WEbApiAutores.Controllers
             return CreatedAtRoute("obtenerLibro", new { libro.Id }, libritoDTO);
         }
 
-        [HttpPut("{Id:int}")]
+        [HttpPut("{Id:int}", Name = "actualizarLibro")]
         public async Task<ActionResult> Put(int libroId, LibroCreacionDTO libroCreacion)
         {
             var libro = await context.Libros
@@ -104,7 +104,7 @@ namespace WEbApiAutores.Controllers
             }
         }
 
-        [HttpPatch("{id:int}")]
+        [HttpPatch("{id:int}", Name = "patchLibro")]
         public async Task<ActionResult> Patch(int id, JsonPatchDocument<LibroPatchDTO> jsonPatchDocument)
         {
             if(jsonPatchDocument == null)
@@ -134,7 +134,7 @@ namespace WEbApiAutores.Controllers
 
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}", Name = "borrarLibro")]
         public async Task<ActionResult> Delete(int id)
         {
             var existe = await context.Libros.AnyAsync(x => x.Id == id);

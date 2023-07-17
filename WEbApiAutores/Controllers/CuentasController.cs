@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
@@ -8,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WEbApiAutores.DTOs;
+using WEbApiAutores.Servicios;
 
 namespace WEbApiAutores.Controllers
 {
@@ -18,17 +20,71 @@ namespace WEbApiAutores.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly IConfiguration configuration;
         private readonly SignInManager<IdentityUser> signInManager;
+        private readonly HashService hashService;
+        private readonly IDataProtector dataProtector;
 
         public CuentasController( UserManager<IdentityUser> userManager, 
                                     IConfiguration configuration,
-                                    SignInManager<IdentityUser> signInManager)
+                                    SignInManager<IdentityUser> signInManager,
+                                    IDataProtectionProvider dataProtectionProvider,
+                                    HashService hashService)
         {
             this.userManager = userManager;
             this.configuration = configuration;
             this.signInManager = signInManager;
+            this.hashService = hashService;
+            dataProtector =  dataProtectionProvider.CreateProtector("valor_unico_y_quizas_secreto"); // Esto es parte de la llave
+            
         }
 
-        [HttpPost]
+        //[HttpGet("Hash/{textoPlano}")]
+        //public ActionResult RealizarHash(string textoPlano) 
+        //{
+        //    var resultado1 = hashService.Hash(textoPlano);
+        //    var resultado2 = hashService.Hash(textoPlano);
+
+        //    return Ok( new
+        //    {
+        //        textoPlano = textoPlano,
+        //        resultado1 = resultado1,
+        //        resultado2 = resultado2 
+        //    });
+        //}
+
+        //[HttpGet("Encriptar")]
+        //public ActionResult Encriptar() 
+        //{
+        //    var textoPlano = "Gaby Cornejo";
+        //    var textoCifrado = dataProtector.Protect(textoPlano);
+        //    var textoDesencriptado = dataProtector.Unprotect(textoCifrado);
+
+        //    return Ok(new 
+        //    {
+        //        textoPlano = textoPlano,
+        //        textoCifrado = textoCifrado,
+        //        textoDesencriptado = textoDesencriptado
+        //    });
+        //}
+
+        //[HttpGet("EncriptarPorTiempo")]
+        //public ActionResult EncriptarPorTiempo()
+        //{
+        //    var protectorLimitadoPorTiempo = dataProtector.ToTimeLimitedDataProtector();
+
+        //    var textoPlano = "Gaby Cornejo";
+        //    var textoCifrado = protectorLimitadoPorTiempo.Protect(textoPlano, lifetime: TimeSpan.FromSeconds(5));
+        //    Thread.Sleep(6000);
+        //    var textoDesencriptado = protectorLimitadoPorTiempo.Unprotect(textoCifrado);
+
+        //    return Ok(new
+        //    {
+        //        textoPlano = textoPlano,
+        //        textoCifrado = textoCifrado,
+        //        textoDesencriptado = textoDesencriptado
+        //    });
+        //}
+
+        [HttpPost("registrar", Name = "registrarUsuario")]
         public async Task<ActionResult<RespuestaAutenticacion>> Registrar(CredencialesUsuario credencialesUsuario) 
         {
             var usuario = new IdentityUser
@@ -50,7 +106,7 @@ namespace WEbApiAutores.Controllers
             }
         }
 
-        [HttpPost("login")]
+        [HttpPost("login", Name = "loginUsuario")]
         public async Task<ActionResult<RespuestaAutenticacion>> Login(CredencialesUsuario credencialesUsuario) 
         {
             var resultado = await signInManager.PasswordSignInAsync(credencialesUsuario.Email,
@@ -67,7 +123,7 @@ namespace WEbApiAutores.Controllers
 
         }
 
-        [HttpGet("RenovarToken")]
+        [HttpGet("RenovarToken", Name = "renovarToken")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         private async Task<ActionResult<RespuestaAutenticacion>> Renovar()
         {
@@ -109,7 +165,7 @@ namespace WEbApiAutores.Controllers
             };
         }
 
-        [HttpPost("HacerAdmin")]
+        [HttpPost("HacerAdmin", Name = "hacerAdmin")]
         public async Task<ActionResult> HacerAdmin(EditarAdminDTO editarAdminDTO) 
         {
             var usuario = await userManager.FindByEmailAsync(editarAdminDTO.Email);
@@ -118,7 +174,7 @@ namespace WEbApiAutores.Controllers
             return NoContent();
         }
 
-        [HttpPost("RemoverAdmin")]
+        [HttpPost("RemoverAdmin", Name = "removerAdmin")]
         public async Task<ActionResult> RemoverAdmin(EditarAdminDTO editarAdminDTO)
         {
             var usuario = await userManager.FindByEmailAsync(editarAdminDTO.Email);
