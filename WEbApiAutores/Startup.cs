@@ -67,7 +67,7 @@ namespace WEbApiAutores
             //service.AddEndpointsApiExplorer();
             service.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiAutores", Version = "v1" });
-                //c.OperationFilter<AgregarParametroHATEOAS>();
+                c.OperationFilter<AgregarParametroHATEOAS>();
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

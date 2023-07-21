@@ -42,7 +42,7 @@ namespace WEbApiAutores.Controllers
         [HttpGet(Name = "obtenerAutores")] // api/autores 
         [AllowAnonymous]
         [ServiceFilter(typeof(HATEOASAutorFilterAttribute))]
-        public async Task<ActionResult<List<AutorDTO>>> Get([FromHeader] string IncluirHATEOAS)
+        public async Task<ActionResult<List<AutorDTO>>> Get()
         {
             var autores = await context.Autores.Include(x => x.Libros).ToListAsync();
             
@@ -74,7 +74,7 @@ namespace WEbApiAutores.Controllers
         [HttpGet("{id:int}", Name = "obtenerAutor")]
         [AllowAnonymous]
         [ServiceFilter(typeof(HATEOASAutorFilterAttribute))]
-        public async Task<ActionResult<AutorDTOConLibros>> Get(int id, [FromHeader] string IncluirHATEOAS)
+        public async Task<ActionResult<AutorDTOConLibros>> Get(int id)
         {
             var Autor = await context.Autores
                         .Include(autorDB => autorDB.AutoresLibros)
