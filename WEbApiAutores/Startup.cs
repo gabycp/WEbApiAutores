@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -10,6 +11,7 @@ using WEbApiAutores.Controllers;
 using WEbApiAutores.Filtros;
 using WEbApiAutores.Middlewares;
 using WEbApiAutores.Servicios;
+using WEbApiAutores.Utilidades;
 
 namespace WEbApiAutores
 {
@@ -65,6 +67,7 @@ namespace WEbApiAutores
             //service.AddEndpointsApiExplorer();
             service.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiAutores", Version = "v1" });
+                //c.OperationFilter<AgregarParametroHATEOAS>();
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -90,6 +93,8 @@ namespace WEbApiAutores
                         new string[] {}
                     }
                 });
+
+
 
                     }) ;
 
@@ -118,6 +123,13 @@ namespace WEbApiAutores
 
             //Se llama por Transient, ya que este servicio no guarda estado
             service.AddTransient<HashService>();
+
+            //Agregar los servicios para los HATEOAS
+            service.AddTransient<GeneradorEnlaces>();
+            service.AddTransient<HATEOASAutorFilterAttribute>();
+            service.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
+
         }
 
         public void Configure( IApplicationBuilder
