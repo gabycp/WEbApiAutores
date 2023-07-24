@@ -7,17 +7,17 @@ using Microsoft.EntityFrameworkCore;
 using WEbApiAutores.DTOs;
 using WEbApiAutores.Entidades;
 
-namespace WEbApiAutores.Controllers
+namespace WEbApiAutores.Controllers.V1
 {
     [ApiController]
-    [Route("api/libros/{libroId:int}/comentarios")]
-    public class ComentariosController: ControllerBase
+    [Route("api/v1/libros/{libroId:int}/comentarios")]
+    public class ComentariosController : ControllerBase
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly UserManager<IdentityUser> userManager;
 
-        public ComentariosController(ApplicationDbContext context,IMapper mapper, UserManager<IdentityUser> userManager)
+        public ComentariosController(ApplicationDbContext context, IMapper mapper, UserManager<IdentityUser> userManager)
         {
             this.context = context;
             this.mapper = mapper;
@@ -25,19 +25,19 @@ namespace WEbApiAutores.Controllers
         }
 
         [HttpGet(Name = "obtenerComentariosLibro")]
-        public async Task<ActionResult<List<ComentarioDT>>> Get(int libroId) 
-        { 
+        public async Task<ActionResult<List<ComentarioDT>>> Get(int libroId)
+        {
             var comentarios = await context.Comentarios.Where(coment => coment.LibrosId == libroId).ToListAsync();
 
             return mapper.Map<List<ComentarioDT>>(comentarios);
         }
 
         [HttpGet("{Id:int}", Name = "obtenerComentario")]
-        public async Task<ActionResult<ComentarioDT>> GetPorId(int id) 
+        public async Task<ActionResult<ComentarioDT>> GetPorId(int id)
         {
-            var comentarioDTO = await context.Comentarios.FirstOrDefaultAsync( comentarioBD => comentarioBD.Id == id);
+            var comentarioDTO = await context.Comentarios.FirstOrDefaultAsync(comentarioBD => comentarioBD.Id == id);
 
-            if(comentarioDTO == null)
+            if (comentarioDTO == null)
             {
                 return NotFound();
             }
@@ -56,7 +56,8 @@ namespace WEbApiAutores.Controllers
 
             var existeLibro = await context.Libros.AnyAsync(x => x.Id == libroId);
 
-            if (!existeLibro) { 
+            if (!existeLibro)
+            {
                 return NotFound();
             }
 
@@ -68,13 +69,13 @@ namespace WEbApiAutores.Controllers
 
             var comentarioDTO = mapper.Map<ComentarioDT>(comentario);
 
-            return CreatedAtRoute("obtenerComentario", new { id = comentario.Id, libroId = libroId }, comentarioDTO);
-            
+            return CreatedAtRoute("obtenerComentario", new { id = comentario.Id, libroId }, comentarioDTO);
+
 
         }
 
         [HttpPut("{Id:int}", Name = "actualizarComentario")]
-        public async Task<ActionResult> Put(int libroId,int Id, ComentarioCreacionDTO comentarioCreacion)
+        public async Task<ActionResult> Put(int libroId, int Id, ComentarioCreacionDTO comentarioCreacion)
         {
             var existeLibro = await context.Libros.AnyAsync(x => x.Id == libroId);
 
@@ -101,5 +102,5 @@ namespace WEbApiAutores.Controllers
         }
     }
 
-    
+
 }

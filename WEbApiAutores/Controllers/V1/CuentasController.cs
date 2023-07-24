@@ -11,11 +11,11 @@ using System.Text;
 using WEbApiAutores.DTOs;
 using WEbApiAutores.Servicios;
 
-namespace WEbApiAutores.Controllers
+namespace WEbApiAutores.Controllers.V1
 {
     [ApiController]
-    [Route("api/cuentas")]
-    public class CuentasController:ControllerBase
+    [Route("api/v1/cuentas")]
+    public class CuentasController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly IConfiguration configuration;
@@ -23,7 +23,7 @@ namespace WEbApiAutores.Controllers
         private readonly HashService hashService;
         private readonly IDataProtector dataProtector;
 
-        public CuentasController( UserManager<IdentityUser> userManager, 
+        public CuentasController(UserManager<IdentityUser> userManager,
                                     IConfiguration configuration,
                                     SignInManager<IdentityUser> signInManager,
                                     IDataProtectionProvider dataProtectionProvider,
@@ -33,8 +33,8 @@ namespace WEbApiAutores.Controllers
             this.configuration = configuration;
             this.signInManager = signInManager;
             this.hashService = hashService;
-            dataProtector =  dataProtectionProvider.CreateProtector("valor_unico_y_quizas_secreto"); // Esto es parte de la llave
-            
+            dataProtector = dataProtectionProvider.CreateProtector("valor_unico_y_quizas_secreto"); // Esto es parte de la llave
+
         }
 
         //[HttpGet("Hash/{textoPlano}")]
@@ -85,7 +85,7 @@ namespace WEbApiAutores.Controllers
         //}
 
         [HttpPost("registrar", Name = "registrarUsuario")]
-        public async Task<ActionResult<RespuestaAutenticacion>> Registrar(CredencialesUsuario credencialesUsuario) 
+        public async Task<ActionResult<RespuestaAutenticacion>> Registrar(CredencialesUsuario credencialesUsuario)
         {
             var usuario = new IdentityUser
             {
@@ -95,24 +95,24 @@ namespace WEbApiAutores.Controllers
 
             var resultado = await userManager.CreateAsync(usuario, credencialesUsuario.Password);
 
-            if(resultado.Succeeded)
+            if (resultado.Succeeded)
             {
 
                 return await ConstruirToken(credencialesUsuario);
             }
-            else 
+            else
             {
                 return BadRequest(resultado.Errors);
             }
         }
 
         [HttpPost("login", Name = "loginUsuario")]
-        public async Task<ActionResult<RespuestaAutenticacion>> Login(CredencialesUsuario credencialesUsuario) 
+        public async Task<ActionResult<RespuestaAutenticacion>> Login(CredencialesUsuario credencialesUsuario)
         {
             var resultado = await signInManager.PasswordSignInAsync(credencialesUsuario.Email,
-                                        credencialesUsuario.Password, isPersistent:false, lockoutOnFailure:false);
+                                        credencialesUsuario.Password, isPersistent: false, lockoutOnFailure: false);
 
-            if(resultado.Succeeded) 
+            if (resultado.Succeeded)
             {
                 return await ConstruirToken(credencialesUsuario);
             }
@@ -166,7 +166,7 @@ namespace WEbApiAutores.Controllers
         }
 
         [HttpPost("HacerAdmin", Name = "hacerAdmin")]
-        public async Task<ActionResult> HacerAdmin(EditarAdminDTO editarAdminDTO) 
+        public async Task<ActionResult> HacerAdmin(EditarAdminDTO editarAdminDTO)
         {
             var usuario = await userManager.FindByEmailAsync(editarAdminDTO.Email);
             await userManager.AddClaimAsync(usuario, new Claim("esAdmin", "1"));

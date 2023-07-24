@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using WEbApiAutores.DTOs;
 using WEbApiAutores.Entidades;
 
-namespace WEbApiAutores.Controllers
+namespace WEbApiAutores.Controllers.V1
 {
     [ApiController]
-    [Route("api/libros")]
+    [Route("api/v1/libros")]
     public class LibrosController : ControllerBase
     {
         private readonly ApplicationDbContext context;
@@ -31,7 +31,7 @@ namespace WEbApiAutores.Controllers
                 .ThenInclude(autorLibroDB => autorLibroDB.Autor)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            if(libro == null)
+            if (libro == null)
             {
 
                 return NotFound();
@@ -107,14 +107,14 @@ namespace WEbApiAutores.Controllers
         [HttpPatch("{id:int}", Name = "patchLibro")]
         public async Task<ActionResult> Patch(int id, JsonPatchDocument<LibroPatchDTO> jsonPatchDocument)
         {
-            if(jsonPatchDocument == null)
+            if (jsonPatchDocument == null)
             {
                 return BadRequest();
             }
 
             var libroDB = await context.Libros.FirstOrDefaultAsync(x => x.Id == id);
 
-            if(libroDB == null)
+            if (libroDB == null)
             {
                 return NotFound();
             }
@@ -125,7 +125,7 @@ namespace WEbApiAutores.Controllers
 
             var esValido = TryValidateModel(libroDTO);
 
-            if(!esValido) { return BadRequest(ModelState); }
+            if (!esValido) { return BadRequest(ModelState); }
 
             mapper.Map(libroDTO, libroDB);
 

@@ -41,6 +41,7 @@ namespace WEbApiAutores
 
             service.AddControllers( opciones => {
                 opciones.Filters.Add(typeof(FiltrodeExcepcioncs));
+                opciones.Conventions.Add( new SwaggerAgruparPorVersion());
             } ).AddJsonOptions( x =>
                     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles).AddNewtonsoftJson();
 
@@ -67,6 +68,7 @@ namespace WEbApiAutores
             //service.AddEndpointsApiExplorer();
             service.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiAutores", Version = "v1" });
+                c.SwaggerDoc("v2", new OpenApiInfo { Title = "WebApiAutores", Version = "v2" });
                 c.OperationFilter<AgregarParametroHATEOAS>();
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -146,16 +148,24 @@ namespace WEbApiAutores
             if (env.IsDevelopment()) //Este metodo permite mostrar solo lo que estara en modo de desarrollo y no estara en produccion
             {
                 app.UseSwagger();
-                 app.UseSwaggerUI();
-                //app.UseSwagger();
-                //app.UseSwaggerUI();
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiAutores"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiAutores v1");
+                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "WebApiAutores v2");
+                    
+                });
+
 
 
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            //app.UseSwagger();
+            //app.UseSwaggerUI(c =>
+            //{
+            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiAutores v1");
+            //    c.SwaggerEndpoint("/swagger/v2/swagger.json", "WebApiAutores v2");
+
+            //});
 
             app.UseHttpsRedirection();
 

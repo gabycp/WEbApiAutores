@@ -63,3 +63,11 @@ Esquemas de Autenticación
 *Basic(en base64)
 *Bearer(con token que devuelve el servidor)
 
+--El versionamiento Web API
+Actualizar el web API es facil, actualizar los clientes no siempre es facil.
+Versionar es hacer versiones de tu aplicación
+El cliente indica que versión del web API quiere utilizar
+El cliente puede indicar esto por URL, query string, cabecera HTTP, etc.
+Una forma por URL seria por ejemplo, api/v1/autores    api /v2/autores
+Otra forma es a traves de cabecera.
+*Convencion: esto permitira separar los controladores por Namespace
