@@ -11,8 +11,11 @@ using WEbApiAutores.Utilidades;
 namespace WEbApiAutores.Controllers.V1
 {
     [ApiController]
-    [Route("api/v1/autores")]
+    //[Route("api/v1/autores")]
+    [Route("api/autores")]
+    [CabeceraEstaPresente("x-version","1")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "esAdmin")]
+    [ApiConventionType(typeof(DefaultApiConventions))]  
     //  [Authorize]
     public class AutoresController : ControllerBase
     {
@@ -74,6 +77,8 @@ namespace WEbApiAutores.Controllers.V1
         [HttpGet("{id:int}", Name = "obtenerAutorv1")]
         [AllowAnonymous]
         [ServiceFilter(typeof(HATEOASAutorFilterAttribute))]
+        //[ProducesResponseType(404)]
+        //[ProducesResponseType(200)]
         public async Task<ActionResult<AutorDTOConLibros>> Get(int id)
         {
             var Autor = await context.Autores
@@ -166,6 +171,11 @@ namespace WEbApiAutores.Controllers.V1
             return NoContent();
         }
 
+        /// <summary>
+        /// Borra un autor
+        /// </summary>
+        /// <param name="id">Id del autor al borrar</param>
+        /// <returns></returns>
         [HttpDelete("{id:int}", Name = "borrarAutorv1")] //api/autores/2
         public async Task<ActionResult> Delete(int id)
         {

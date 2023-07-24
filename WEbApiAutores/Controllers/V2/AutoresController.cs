@@ -11,7 +11,9 @@ using WEbApiAutores.Utilidades;
 namespace WEbApiAutores.Controllers.V2
 {
     [ApiController]
-    [Route("api/v2/autores")]
+    //[Route("api/v2/autores")]
+    [Route("api/autores")]
+    [CabeceraEstaPresente("x-version","2")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "esAdmin")]
     //  [Authorize]
     public class AutoresController : ControllerBase

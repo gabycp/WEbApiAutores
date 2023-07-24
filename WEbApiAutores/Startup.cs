@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using WEbApiAutores.Controllers;
@@ -13,6 +15,7 @@ using WEbApiAutores.Middlewares;
 using WEbApiAutores.Servicios;
 using WEbApiAutores.Utilidades;
 
+[assembly: ApiConventionType(typeof(DefaultApiConventions))]
 namespace WEbApiAutores
 {
     public class Startup
@@ -67,9 +70,23 @@ namespace WEbApiAutores
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             //service.AddEndpointsApiExplorer();
             service.AddSwaggerGen(c => {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiAutores", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "WebApiAutores", 
+                    Version = "v1",
+                    Description = "Este es un web API para trabajar con autores y libros",
+                    Contact = new OpenApiContact 
+                    {
+                        Email = "gaby_cor93@hotmail.com",
+                        Name = "Gabriela Cornejo"
+                    },
+                    License = new OpenApiLicense 
+                    {
+                        Name = "MIT"
+                    }
+                });
                 c.SwaggerDoc("v2", new OpenApiInfo { Title = "WebApiAutores", Version = "v2" });
                 c.OperationFilter<AgregarParametroHATEOAS>();
+                c.OperationFilter<AgregarParametrosXVersion>();
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -96,7 +113,9 @@ namespace WEbApiAutores
                     }
                 });
 
-
+                var archivoXML = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var rutaXML = Path.Combine(AppContext.BaseDirectory, archivoXML);
+                c.IncludeXmlComments(rutaXML);
 
                     }) ;
 
