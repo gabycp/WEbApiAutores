@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WEbApiAutores.DTOs;
 using WEbApiAutores.Entidades;
+using WEbApiAutores.Utilidades;
 
 namespace WEbApiAutores.Controllers.V1
 {
@@ -25,9 +26,15 @@ namespace WEbApiAutores.Controllers.V1
         }
 
         [HttpGet(Name = "obtenerComentariosLibro")]
-        public async Task<ActionResult<List<ComentarioDT>>> Get(int libroId)
+        public async Task<ActionResult<List<ComentarioDT>>> Get(int libroId, [FromQuery] PaginacionDTO paginacionDTO)
         {
-            var comentarios = await context.Comentarios.Where(coment => coment.LibrosId == libroId).ToListAsync();
+
+            var queryable = context.Comentarios.Where(comentarioDB => comentarioDB.LibrosId == libroId).AsQueryable();
+            await HttpContext.InsertarParametrosPaginacionEnCabecera(queryable);
+
+            var comentarios = await queryable
+                .OrderBy(comentario => comentario.Id)
+                .Paginar(paginacionDTO).ToListAsync();
 
             return mapper.Map<List<ComentarioDT>>(comentarios);
         }

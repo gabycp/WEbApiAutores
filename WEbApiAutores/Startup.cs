@@ -138,7 +138,8 @@ namespace WEbApiAutores
             {
                 opciones.AddDefaultPolicy(builder => 
                 {
-                    builder.WithOrigins("https://reqbin.com").AllowAnyMethod().AllowAnyHeader();
+                    builder.WithOrigins("https://reqbin.com").AllowAnyMethod().AllowAnyHeader()
+                    .WithExposedHeaders(new string[] { "cantidadTotalRegistros" });
                 } );
             });
 
