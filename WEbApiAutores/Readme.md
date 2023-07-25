@@ -71,3 +71,16 @@ El cliente puede indicar esto por URL, query string, cabecera HTTP, etc.
 Una forma por URL seria por ejemplo, api/v1/autores    api /v2/autores
 Otra forma es a traves de cabecera.
 *Convencion: esto permitira separar los controladores por Namespace
+
+-Pruebas automaticas
+Es un software que prueba nuestro software.
+Da la confianza de cambiar código de nuestro software.
+*Una buena prueba es razonablemente consistente.
+*Una buena prueba no depende de otra prueba.
+A un conjunto de pruebas automaticas se le llama suite de pruebas
+Etapas de una prueba: Prepara, 
+					  Probar,
+					  Varificar.
+Una prueba unitoria tiende a probar una funcion de una clase.
+
+Mock: Es una clase que subplanta las dependencia.
