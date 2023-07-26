@@ -84,3 +84,13 @@ Etapas de una prueba: Prepara,
 Una prueba unitoria tiende a probar una funcion de una clase.
 
 Mock: Es una clase que subplanta las dependencia.
+
+-Pruebas con Entity Framework Core
+*Podemos utilizar un proveedor en memoria
+*Podemos utilizar localDB
+
+-Pruebas de Integración
+Verifican que las distintas partes de un software trabajan corretamente en conjunto.
+Desde el punto de vista de la organización, lo comun es separar nuestras pruebas de integración y unitarias
+en distrintos proyectos.
+No siempre se usa Mocks en la pruebas de integracion.

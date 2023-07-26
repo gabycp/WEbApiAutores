@@ -167,25 +167,25 @@ namespace WEbApiAutores
             //Los metodos que comienza con Use son los Middleware
             if (env.IsDevelopment()) //Este metodo permite mostrar solo lo que estara en modo de desarrollo y no estara en produccion
             {
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiAutores v1");
-                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "WebApiAutores v2");
+                //app.UseSwagger();
+                //app.UseSwaggerUI(c =>
+                //{
+                //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiAutores v1");
+                //    c.SwaggerEndpoint("/swagger/v2/swagger.json", "WebApiAutores v2");
                     
-                });
+                //});
 
 
 
             }
 
-            //app.UseSwagger();
-            //app.UseSwaggerUI(c =>
-            //{
-            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiAutores v1");
-            //    c.SwaggerEndpoint("/swagger/v2/swagger.json", "WebApiAutores v2");
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiAutores v1");
+                c.SwaggerEndpoint("/swagger/v2/swagger.json", "WebApiAutores v2");
 
-            //});
+            });
 
             app.UseHttpsRedirection();
 
