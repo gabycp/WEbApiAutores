@@ -7,19 +7,19 @@ trigger:
 - master
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: vs2017-win2016
 
 variables:
   buildConfiguration: 'Release'
-  proyecto: 'WEbApiAutores/WEbApiAutores.csproj'
+  proyectoSource: 'WEbApiAutores/WEbApiAutores.csproj'
 
 steps:
 - task: UseDotNet@2
   displayName: 'Instalando Preview ASP.NET Core 6'
   inputs:
     packageType: 'sdk'
-    version: '7.0.304'
-    includePreviewVersions: false
+    version: '6.0.100-preview.4.21255.9'
+    includePreviewVersions: true
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
 - task: CmdLine@2
@@ -29,13 +29,13 @@ steps:
 - task: CmdLine@2
   displayName: 'Generating DB script'
   inputs:
-    script: 'dotnet ef migrations script -i -o $(Build.ArtifactStagingDirectory)\migrate.sql --project $(proyecto)'
+    script: 'dotnet ef migrations script -i -o $(Build.ArtifactStagingDirectory)\migrate.sql --project $(proyectoSource)'
 - task: DotNetCoreCLI@2
   displayName: 'Publishing App...'
   inputs:
     command: 'publish'
     publishWebProjects: false
-    projects: $(proyecto)
+    projects: $(proyectoSource)
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --runtime win-x64 --self-contained'
     zipAfterPublish: false
     modifyOutputPath: false
