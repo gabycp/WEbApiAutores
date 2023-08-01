@@ -15,13 +15,9 @@ variables:
 
 steps:
 - task: UseDotNet@2
-  displayName: 'Instalando Preview ASP.NET Core 6'
+  displayName: 'Instalar .NET Core 6.0'
   inputs:
-    packageType: 'sdk'
-    version: '7.0.304'
-    includePreviewVersions: true
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+    version: '6.0.x'
 - task: CmdLine@2
   displayName: 'Installing EF Core CLI'
   inputs:
