@@ -175,7 +175,7 @@ namespace WEbApiAutores.Controllers.V1
         }
 
         /// <summary>
-        /// Borra un autor
+        /// Borra un autor (Saludos desde Azure)
         /// </summary>
         /// <param name="id">Id del autor al borrar</param>
         /// <returns></returns>

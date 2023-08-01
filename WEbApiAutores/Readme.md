@@ -94,3 +94,5 @@ Verifican que las distintas partes de un software trabajan corretamente en conju
 Desde el punto de vista de la organización, lo comun es separar nuestras pruebas de integración y unitarias
 en distrintos proyectos.
 No siempre se usa Mocks en la pruebas de integracion.
+
+--Con Aplication Insight podemos guardar y verificar los logs en Azure

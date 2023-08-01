@@ -151,6 +151,8 @@ namespace WEbApiAutores
             service.AddTransient<HATEOASAutorFilterAttribute>();
             service.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
+            service.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:ConnectionString"]);
+
 
         }
 
